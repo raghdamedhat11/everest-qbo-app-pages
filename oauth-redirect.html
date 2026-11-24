@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Returning to the local app</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; frame-ancestors 'none'">
+<!-- No third-party scripts, analytics, fonts, images, or any external asset of any kind are
+     loaded by this page - everything is inline, verified by reading this file: there is no
+     <script src=...>, <link>, <img>, or other external reference anywhere below. The CSP
+     above additionally enforces this at the browser level, not just by omission. -->
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 560px; margin: 60px auto; padding: 0 16px; color: #222; }
+  textarea { width: 100%; height: 90px; font-family: monospace; font-size: 13px; }
+  .muted { color: #666; font-size: 14px; }
+  button { padding: 8px 14px; margin-top: 8px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h2>Returning you to the local app&hellip;</h2>
+<p id="status">Redirecting to <code>http://localhost:8766/callback</code> now.</p>
+
+<p class="muted">
+  If nothing happens within a few seconds (some browsers or security settings block an
+  automatic redirect to <code>localhost</code>), copy the text below and paste it into the
+  "Manual code entry" field in the <strong>qbo_connect_production.pyw</strong> window on your
+  computer instead.
+</p>
+<textarea id="manual" readonly></textarea><br>
+<button id="copyBtn">Copy</button>
+
+<p class="muted" style="margin-top:40px">
+  This page does not store, log, or transmit anything shown here anywhere except directly
+  back to your own computer. It is a static page with no server-side code, no analytics, and
+  no third-party resources of any kind.
+</p>
+<p class="muted">
+  One unavoidable exposure: the hosting provider's own web server necessarily sees this full
+  URL (including the code) for a fraction of a second, the same way any web server sees any
+  URL requested from it - this is true of any HTTPS host, not specific to this one, and is
+  true of every OAuth redirect page on the web. This static host has no server-side code and
+  no visitor-log feature exposed to us, so nothing here is retained or visible to us or the
+  public beyond that one moment - but we cannot prove the hosting provider's own internal
+  infrastructure never retains it either, which is the same limit every hosted OAuth redirect
+  has, regardless of provider. The code itself is single-use and short-lived by Intuit's own
+  design, which limits how long this exposure could ever matter.
+</p>
+
+<script>
+  // Everything below runs only in YOUR browser. Nothing here is sent to, stored by, or
+  // visible to the site hosting this page - it only reads the URL your own browser already
+  // has, and either redirects your own browser to your own computer, or lets you copy it
+  // yourself. No secret, token, or code is ever written to any file in this repository.
+  var qs = window.location.search || "";
+  document.getElementById("manual").value = qs.replace(/^\?/, "");
+  var target = "http://localhost:8766/callback" + qs;
+  // Clear the authorization code/state out of THIS page's own address bar and history entry
+  // immediately - before the redirect fires, not after - so it doesn't sit there any longer
+  // than necessary even if the next hop (localhost) is slow or blocked.
+  try {
+    history.replaceState(null, "", window.location.pathname);
+  } catch (e) { /* some browsers restrict this on file:// or certain origins - non-fatal */ }
+  setTimeout(function () {
+    window.location.href = target;
+  }, 300);
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    var el = document.getElementById("manual");
+    el.select();
+    document.execCommand("copy");
+  });
+</script>
+</body>
+</html>
